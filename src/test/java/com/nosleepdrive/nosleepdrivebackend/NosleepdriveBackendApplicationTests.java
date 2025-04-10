@@ -10,6 +10,7 @@ class NosleepdriveBackendApplicationTests {
 
     @Test
     void contextLoads() {
+        assert true;
     }
 
 }

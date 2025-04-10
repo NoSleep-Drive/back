@@ -26,7 +26,7 @@ jobs:
         run: ./gradlew clean build
 
       - name: Run Tests
-        run: ./gradlew -x test
+        run: ./gradlew test
 
   deploy:
     if: github.ref == 'refs/heads/main'

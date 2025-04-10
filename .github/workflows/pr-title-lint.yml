@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR title format
-        uses: JulienKode/pull-request-title-checker-action@v1.7.0
+        uses: Slashgear/action-check-pr-title@v4.3.0
         with:
           regex: '^\[?(feat|fix|chore|docs|refactor|test|style|ci|perf)\]?\s.+\s\(#\d+\)$'
           flags: 'i'

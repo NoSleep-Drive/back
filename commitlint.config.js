@@ -1,13 +1,13 @@
+// commitlint.config.js
 module.exports = {
+    parserPreset: {
+        parserOpts: {
+            headerPattern: /^(\w+)\[#(\d+)\]:\s(.+)$/,
+            headerCorrespondence: ['type', 'ticket', 'subject'],
+        },
+    },
     rules: {
-        'type-enum': [
-            2,
-            'always',
-            ['feat', 'fix', 'chore', 'docs', 'refactor', 'test', 'style', 'ci', 'perf'],
-        ],
-        'type-case': [2, 'always', 'lower-case'],
-        'type-empty': [2, 'never'],
+        'type-enum': [2, 'always', ['feat', 'fix', 'chore', 'docs', 'style', 'refactor', 'test']],
         'subject-empty': [2, 'never'],
-        'header-pattern': [2, 'always', /^(\w+)\[#\d+\]:\s.+$/],
     },
 };

@@ -5,12 +5,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class NosleepdriveBackendApplicationTests {
 
     @Test
     void contextLoads() {
-        assert true;
     }
 
 }

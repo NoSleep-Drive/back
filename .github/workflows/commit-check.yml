@@ -1,0 +1,17 @@
+name: Check Commit Messages
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+
+jobs:
+  commit-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Lint PR commits
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: commitlint.config.js

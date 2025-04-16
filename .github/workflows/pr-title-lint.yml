@@ -1,0 +1,16 @@
+name: PR Title Lint
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title format
+        uses: Slashgear/action-check-pr-title@v4.3.0
+        with:
+          regex: '^\[?(feat|fix|chore|docs|refactor|test|style|ci|perf)\]?\s.+\s\(#\d+\)$'
+          flags: 'i'
+          error: 'PR 제목 형식이 맞지 않습니다. 예: [feat] 회원가입 API 연동 (#15)'

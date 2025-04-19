@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: spring-boot-app
-          path: backend/*.jar
+          path: build/libs/*.jar
 
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4
@@ -60,6 +60,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "backend/*.jar"
-          target: "/home/noSleepDrive/app"  # EC2 내부 경로
+          source: |
+            build/libs/*.jar
+            scripts/start.sh
+          target: "/home/noSleepDrive/app/backend"  # EC2 내부 경로
 

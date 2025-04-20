@@ -4,8 +4,17 @@ APP_DIR="/home/noSleepDrive/app/backend"
 JAR_NAME=$(ls $APP_DIR/*.jar | head -n 1)
 PID_FILE="$APP_DIR/app.pid"
 LOG_FILE="$APP_DIR/app.log"
+ENV_FILE="$APP_DIR/.env"
 
 echo "[start script]"
+
+# 0. Load env variables
+if [ -f "$ENV_FILE" ]; then
+  echo "Loading environment variables from .env"
+  export $(grep -v '^#' "$ENV_FILE" | xargs)
+else
+  echo ".env file not found"
+fi
 
 # 1. terminate previous process
 if [ -f "$PID_FILE" ]; then

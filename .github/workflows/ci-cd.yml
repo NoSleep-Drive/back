@@ -47,6 +47,12 @@ jobs:
         with:
           name: spring-boot-app
           path: ./build/libs
+      - name: Check downloaded files
+        run: |
+          echo "=== JAR 파일 목록 ==="
+          ls -al ./build/libs
+          echo "=== start.sh 위치 확인 ==="
+          ls -al ./scripts || ls -al ./nosleepdrive-backend/scripts
 
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4

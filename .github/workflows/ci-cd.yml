@@ -80,9 +80,18 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "build/libs/*.jar, .env"
+          source: "build/libs/*.jar"
           target: "/home/noSleepDrive/app/backend"
           strip_components: 2
+          
+      - name: Deploy .env via SSH
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: ".env"
+          target: "/home/noSleepDrive/app/backend"
           
       - name: Deploy shall script via SSH
         uses: appleboy/scp-action@v0.1.4

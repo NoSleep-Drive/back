@@ -65,8 +65,11 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "build/libs/*.jar"
+          source: |
+            "build/libs/*.jar"
+            "scripts/start.sh"
           target: "/home/noSleepDrive/app/backend"
+          strip_components: 2
 
       - name: Execute start.sh on EC2
         uses: appleboy/ssh-action@v0.1.6

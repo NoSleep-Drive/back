@@ -42,17 +42,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
+      - name: Set up JDK 22
+        uses: actions/setup-java@v3
         with:
-          name: spring-boot-app
-          path: ./build/libs
-      - name: Check downloaded files
+          distribution: 'temurin'
+          java-version: '22'
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Check files before deploy
         run: |
-          echo "=== JAR 파일 목록 ==="
           ls -al ./build/libs
-          echo "=== start.sh 위치 확인 ==="
-          ls -al ./scripts || ls -al ./nosleepdrive-backend/scripts
+          ls -al ./scripts
 
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4
@@ -61,10 +66,10 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           source: |
-            ./nosleepdrive-backend/build/libs/*.jar
-            ./nosleepdrive-backend/scripts/start.sh
-          target: "/home/noSleepDrive/app/backend"  # EC2 경로
-  
+            ./build/libs/*.jar
+            ./scripts/start.sh
+          target: "/home/noSleepDrive/app/backend"
+
       - name: Execute start.sh on EC2
         uses: appleboy/ssh-action@v0.1.6
         with:

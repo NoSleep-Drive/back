@@ -59,13 +59,19 @@ jobs:
           ls -al ./build/libs
           ls -al ./scripts
 
+      - name: Create .env file
+        run: |
+          echo "DB_URL=${{ secrets.DB_URL }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "build/libs/*.jar"
+          source: "build/libs/*.jar, .env"
           target: "/home/noSleepDrive/app/backend"
           strip_components: 2
           

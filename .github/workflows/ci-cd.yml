@@ -55,8 +55,8 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           source: |
-            ./build/libs/*.jar  # 다운로드된 JAR 파일
-            ./scripts/start.sh  # start.sh 스크립트
+            ./nosleepdrive-backend/build/libs/*.jar
+            ./nosleepdrive-backend/scripts/start.sh
           target: "/home/noSleepDrive/app/backend"  # EC2 경로
   
       - name: Execute start.sh on EC2

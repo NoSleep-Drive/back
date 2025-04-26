@@ -21,6 +21,6 @@ public class Driver {
     private Date endTime;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_vehicle", referencedColumnName = "id_vehicle")
+    @JoinColumn(name = "id_vehicle", referencedColumnName = "id_vehicle", nullable = false)
     Vehicle vehicle;
 }

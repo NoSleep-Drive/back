@@ -1,8 +1,8 @@
 package com.nosleepdrive.nosleepdrivebackend.vehicle.repository;
 
-import com.nosleepdrive.nosleepdrivebackend.user.repository.entity.User;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface VehicleRepository extends JpaRepository<User, Long> {
+public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
 }

@@ -4,7 +4,7 @@ import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 public class Driver {
@@ -14,12 +14,11 @@ public class Driver {
     private Long idDriver;
 
     @NonNull
-    @Column(name = "start_time")
+    @Column(name = "start_time", nullable = false, updatable = false)
     private Date startTime;
 
     @Column(name = "end_time")
     private Date endTime;
-
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_vehicle", referencedColumnName = "id_vehicle")

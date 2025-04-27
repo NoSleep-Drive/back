@@ -32,5 +32,5 @@ public class Vehicle {
     @NonNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_company", referencedColumnName = "id_company", nullable = false)
-    Company company;
+    private Company company;
 }

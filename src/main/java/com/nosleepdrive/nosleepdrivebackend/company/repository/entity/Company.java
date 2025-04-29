@@ -1,9 +1,13 @@
 package com.nosleepdrive.nosleepdrivebackend.company.repository.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +19,7 @@ public class Company {
     private String id;
 
     @NonNull
-    @Column(name = "password", length = 50, nullable = false)
+    @Column(name = "password", length = 64, nullable = false)
     private String password;
 
     @NonNull

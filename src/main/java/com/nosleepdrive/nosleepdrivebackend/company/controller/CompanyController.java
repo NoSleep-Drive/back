@@ -1,13 +1,14 @@
 package com.nosleepdrive.nosleepdrivebackend.company.controller;
 
+import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanySignUpRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,24 +23,17 @@ public class CompanyController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<SimpleResponse> signup(@RequestBody CompanySignUpRequestDto request) {
-        try {
-            companyService.signup(request);
+    public ResponseEntity<SimpleResponse> signup(@Valid @RequestBody CompanySignUpRequestDto request) {
+        companyService.signup(request);
 
-            SimpleResponse response = new SimpleResponse(
-                    HttpStatus.CREATED.value(),
-                    "회원 가입이 완료되었습니다."
-            );
+        int customCode = HttpStatus.CREATED.value();
+        SimpleResponse response = new SimpleResponse(
+                customCode,
+                Message.SIGNUP_SUCCESS.getMessage()
+        );
 
-            return ResponseEntity.ok(response);
-        }
-        catch (ResponseStatusException ex) {
-            SimpleResponse response = new SimpleResponse(
-                    ex.getStatusCode().value(),
-                    ex.getReason()
-            );
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
     }
 }

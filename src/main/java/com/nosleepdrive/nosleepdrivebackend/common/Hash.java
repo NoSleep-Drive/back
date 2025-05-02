@@ -1,10 +1,8 @@
 package com.nosleepdrive.nosleepdrivebackend.common;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,7 +12,7 @@ public class Hash {
     private static String salt;
 
     public Hash(@Value("${security.password.salt}") String salt) {
-        this.salt = salt;
+        Hash.salt = salt;
     }
 
     public String HashEncode(String input) {
@@ -33,13 +31,13 @@ public class Hash {
             result=sb.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"입력 형식이 올바르지 않습니다.");
+            throw new CustomError(HttpStatus.BAD_REQUEST.value(),"입력 형식이 올바르지 않습니다.");
         }
 
         return result;
     }
 
     public boolean Match(String input, String hash) {
-        return HashEncode(input).equals(HashEncode(input));
+        return HashEncode(input).equals(hash);
     }
 }

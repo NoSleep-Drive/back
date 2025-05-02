@@ -1,10 +1,13 @@
 package com.nosleepdrive.nosleepdrivebackend.company.service;
 
+import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Hash;
+import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanySignUpRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.CompanyRepository;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +18,7 @@ public class CompanyService {
 
     public void signup(CompanySignUpRequestDto request) {
         if (companyRepository.existsById(request.getId())) {
-            throw new RuntimeException("ID already exists");
+            throw new CustomError(HttpStatus.CONFLICT.value(), Message.ERR_SIGNUP_DUPLICATION_ID.getMessage());
         }
 
         Company company = Company.builder()

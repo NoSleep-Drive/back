@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

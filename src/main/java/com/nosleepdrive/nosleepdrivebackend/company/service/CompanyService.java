@@ -3,6 +3,8 @@ package com.nosleepdrive.nosleepdrivebackend.company.service;
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Hash;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
+import com.nosleepdrive.nosleepdrivebackend.common.Token;
+import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyLoginRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanySignUpRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.CompanyRepository;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class CompanyService {
     private final CompanyRepository companyRepository;
     private final Hash hash;
+    private final static long expireTime = 3600;
 
     public void signup(CompanySignUpRequestDto request) {
         if (companyRepository.existsById(request.getId())) {
@@ -29,5 +32,16 @@ public class CompanyService {
                 .build();
 
         companyRepository.save(company);
+    }
+
+    public String login(CompanyLoginRequestDto request) {
+        Company target = companyRepository.findById(request.getId())
+                .orElseThrow(()-> new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_INVALID_ID_OR_PASSWORD.getMessage()));
+
+        boolean loginResult = hash.Match(request.getPassword(), target.getPassword());
+        if (!loginResult) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_INVALID_ID_OR_PASSWORD.getMessage());
+        }
+        return Token.generateToken(target.getIdCompany().toString(), expireTime);
     }
 }

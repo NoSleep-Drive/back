@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -142,6 +143,24 @@ public class VehicleController {
 
         int customCode = HttpStatus.OK.value();
         VehicleNumResponseDto<VehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(), new VehicleCountDto(vehicleNum));
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @GetMapping("/abnormal/count")
+    public ResponseEntity<VehicleNumResponseDto<AbnormalVehicleCountDto>> getAbnormalVehicleCount(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        List<Vehicle> vehicles = curCompany.getVehicles();
+        int result = vehicleService.getAbnormalDataCount(vehicles);
+
+        int customCode = HttpStatus.OK.value();
+        VehicleNumResponseDto<AbnormalVehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(), new AbnormalVehicleCountDto(result));
         return ResponseEntity
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);

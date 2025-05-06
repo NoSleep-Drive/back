@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -106,5 +107,16 @@ public class VehicleService {
         }
 
         return vehicleStatus.cameraAndSpeakerAndAccelerationSensorError.ordinal();
+    }
+
+    public int getAbnormalDataCount(List<Vehicle> datas) {
+        int result = 0;
+        for (int i = 0; i < datas.size(); i++) {
+            if (datas.get(i).getErrorState() != 0) { // 또는 다른 기준
+                result++;
+            }
+        }
+
+        return result;
     }
 }

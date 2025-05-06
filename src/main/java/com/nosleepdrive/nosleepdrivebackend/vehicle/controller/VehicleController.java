@@ -142,7 +142,7 @@ public class VehicleController {
         int vehicleNum = curCompany.getVehicles().size();
 
         int customCode = HttpStatus.OK.value();
-        VehicleNumResponseDto<VehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(), new VehicleCountDto(vehicleNum));
+        VehicleNumResponseDto<VehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_COUNT_SUCCESS.getMessage(), new VehicleCountDto(vehicleNum));
         return ResponseEntity
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);
@@ -160,7 +160,7 @@ public class VehicleController {
         int result = vehicleService.getAbnormalDataCount(vehicles);
 
         int customCode = HttpStatus.OK.value();
-        VehicleNumResponseDto<AbnormalVehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(), new AbnormalVehicleCountDto(result));
+        VehicleNumResponseDto<AbnormalVehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_ABNORMAL_VEHICLES_COUNT_SUCCESS.getMessage(), new AbnormalVehicleCountDto(result));
         return ResponseEntity
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);

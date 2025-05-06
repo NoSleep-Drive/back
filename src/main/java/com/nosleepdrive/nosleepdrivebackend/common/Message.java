@@ -23,7 +23,10 @@ public enum Message{
     ERR_SQL_FK("존재하지 않는 외래키 참조입니다."),
 
     CREATE_VEHICLE_SUCCESS("차량이 등록되었습니다."),
-    ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다.");
+    DELETE_VEHICLE_SUCCESS("차량 등록이 삭제되었습니다."),
+    ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다."),
+    ERR_NOT_FOUND_VEHICLE("해당 차량을 찾을 수 없습니다."),
+    ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다.");
 
     private final String message;
 }

@@ -1,8 +1,12 @@
 package com.nosleepdrive.nosleepdrivebackend.company.repository.entity;
 
+import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.lang.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -31,5 +35,8 @@ public class Company {
 
     @Column(name = "business_number", length = 50, unique = true)
     private String businessNumber;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Vehicle> vehicles = new ArrayList<>();
 }
 

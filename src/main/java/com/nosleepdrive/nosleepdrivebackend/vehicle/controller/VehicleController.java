@@ -42,4 +42,26 @@ public class VehicleController {
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);
     }
+
+    @DeleteMapping("/{deviceUid}")
+    public ResponseEntity<SimpleResponse> deleteVehicle(@RequestHeader("Authorization") String authHeader, @PathVariable String deviceUid) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany =  companyService.authCompany(token);
+
+
+        vehicleService.deleteVehicleByDeviceUid(deviceUid, curCompany);
+        int customCode = HttpStatus.OK.value();
+        SimpleResponse response = new SimpleResponse(customCode,
+                Message.DELETE_VEHICLE_SUCCESS.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
 }

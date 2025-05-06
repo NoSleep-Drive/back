@@ -9,6 +9,7 @@ import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -32,4 +33,15 @@ public class VehicleService {
         vehicleRepository.save(vehicle);
     }
 
+    @Transactional
+    public void deleteVehicleByDeviceUid(String deviceUid, Company company) {
+        Vehicle vehicle = vehicleRepository.findByIdHardware(deviceUid);
+        if(vehicle==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(vehicle.getCompany() != company){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+        vehicleRepository.delete(vehicle);
+    }
 }

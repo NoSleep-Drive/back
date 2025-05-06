@@ -36,7 +36,7 @@ public class Vehicle {
     private Date createdDate;
 
     @NonNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_company", referencedColumnName = "id_company", nullable = false)
     private Company company;
 }

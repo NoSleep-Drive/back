@@ -24,7 +24,7 @@ public class VehicleService {
         }
         Vehicle vehicle =  Vehicle.builder()
                 .idHardware(request.getDeviceUid())
-                .carNumber(request.getDeviceUid())
+                .carNumber(request.getVehicleNumber())
                 .errorState(0)
                 .createdDate(new Date())
                 .company(company)
@@ -43,5 +43,17 @@ public class VehicleService {
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
         vehicleRepository.delete(vehicle);
+    }
+
+    @Transactional
+    public void updateVehicleByDeviceUid(String deviceUid, String carNumber, Company company) {
+        Vehicle vehicle = vehicleRepository.findByIdHardware(deviceUid);
+        if(vehicle==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(vehicle.getCompany() != company){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+        vehicle.setCarNumber(carNumber);
     }
 }

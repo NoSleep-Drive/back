@@ -24,7 +24,7 @@ public class Vehicle {
     private String idHardware;
 
     @NonNull
-    @Column(name = "car_number", updatable = false, unique = true, length = 45, nullable = false)
+    @Column(name = "car_number", unique = true, length = 45, nullable = false)
     private String carNumber;
 
     @NonNull

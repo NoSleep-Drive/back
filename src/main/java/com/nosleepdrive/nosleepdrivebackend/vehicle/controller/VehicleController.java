@@ -7,10 +7,7 @@ import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyDataResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
-import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleDto;
-import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleStatusDto;
-import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.DefaultVehicleDataDto;
-import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.VehicleListResponseDto;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.*;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
@@ -128,6 +125,23 @@ public class VehicleController {
         int customCode = HttpStatus.OK.value();
         VehicleListResponseDto response = new VehicleListResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(),
                 curCompany.getVehicles().stream().skip(pageData.getPageIdx() * pageData.getPageSize()).limit(pageData.getPageSize()).collect(Collectors.toList()));
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<VehicleNumResponseDto<VehicleCountDto>> getVehicleCount(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        int vehicleNum = curCompany.getVehicles().size();
+
+        int customCode = HttpStatus.OK.value();
+        VehicleNumResponseDto<VehicleCountDto> response = new VehicleNumResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(), new VehicleCountDto(vehicleNum));
         return ResponseEntity
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);

@@ -7,6 +7,7 @@ import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyDataResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleDto;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleStatusDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.DefaultVehicleDataDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
@@ -59,6 +60,29 @@ public class VehicleController {
         int customCode = HttpStatus.OK.value();
         SimpleResponse response = new SimpleResponse(customCode,
                 Message.DELETE_VEHICLE_SUCCESS.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<SimpleResponse> changeVehicleStatus(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody ChangeVehicleStatusDto request) {
+        // 임베디드 verify 방식에 대한 논의 필요
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+
+        vehicleService.updateVehicleStatusByDeviceUid(request, curCompany);
+
+        int customCode = HttpStatus.OK.value();
+        SimpleResponse response = new SimpleResponse(customCode,
+                Message.UPDATE_VEHICLE_STATUS_SUCCESS.getMessage()
         );
 
         return ResponseEntity

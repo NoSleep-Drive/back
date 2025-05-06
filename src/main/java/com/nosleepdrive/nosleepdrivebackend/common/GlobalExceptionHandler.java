@@ -32,6 +32,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<SimpleResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String message = ex.getMessage();
+        if (message.contains("UK_")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new SimpleResponse( HttpStatus.CONTINUE.value(), Message.ERR_SQL_DEPLICATION.getMessage()));
+        } else if (message.contains("FK_")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleResponse(HttpStatus.BAD_REQUEST.value(), Message.ERR_SQL_FK.getMessage()));
+        }
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new SimpleResponse(HttpStatus.BAD_REQUEST.value(), Message.ERR_SQL_DATA_INTEGRITY_VIOLATION.getMessage()));

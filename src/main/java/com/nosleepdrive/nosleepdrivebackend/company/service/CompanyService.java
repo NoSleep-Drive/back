@@ -11,6 +11,7 @@ import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +55,18 @@ public class CompanyService {
 
     public void deleteCompany(Company company) {
         companyRepository.delete(company);
+    }
+
+    @Transactional()
+    public void updateCompany(Company company, String password, String companyName, String businessNumber) {
+        if(businessNumber != null) {
+            company.setBusinessNumber(businessNumber);
+        }
+        if(companyName != null) {
+            company.setCompanyName(companyName);
+        }
+        if(password != null){
+            company.setPassword(hash.HashEncode(password));
+        }
     }
 }

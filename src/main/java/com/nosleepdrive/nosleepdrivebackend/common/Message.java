@@ -10,6 +10,7 @@ public enum Message{
     LOGIN_SUCCESS("로그인 성공."),
     GET_COMPANY_DATA_SUCCESS("회원 정보 조회 성공."),
     DELETE_COMPANY_SUCCESS("회원 탈퇴가 완료되었습니다."),
+    PATCH_COMPANY_SUCCESS("회원 정보가 수정되었습니다."),
     ERR_SIGNUP_DUPLICATION_ID("이미 존재하는 ID입니다."),
     ERR_INVALID_INPUT("입력 형식이 올바르지 않습니다."),
     ERR_NULL_INPUT("입력값이 누락되었습니다."),
@@ -17,7 +18,9 @@ public enum Message{
     ERR_IN_TOKEN("토큰 관련 메소드 실행 도중 에러가 발생했습니다."),
     ERR_VERIFY_TOKEN("인증 정보가 유효하지 않습니다."),
     ERR_SQL_DATA_INTEGRITY_VIOLATION("데이터 무결성 위반."),
-    ERR_SQL_NOT_FOUND("데이터 찾기 실패.");
+    ERR_SQL_NOT_FOUND("데이터 찾기 실패."),
+    ERR_SQL_DEPLICATION("이미 존재하는 값입니다."),
+    ERR_SQL_FK("존재하지 않는 외래키 참조입니다.");
 
     private final String message;
 }

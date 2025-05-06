@@ -3,10 +3,7 @@ package com.nosleepdrive.nosleepdrivebackend.company.controller;
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
-import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyDataResponseDto;
-import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyLoginRequestDto;
-import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyLoginResponseDto;
-import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanySignUpRequestDto;
+import com.nosleepdrive.nosleepdrivebackend.company.dto.*;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import jakarta.validation.Valid;
@@ -87,6 +84,27 @@ public class CompanyController {
         SimpleResponse response = new SimpleResponse(
                 customCode,
                 Message.DELETE_COMPANY_SUCCESS.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<CompanyDataResponseDto> changeCompanyData(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody CompanyChangeRequestDto request) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany =  companyService.authCompany(token);
+        companyService.updateCompany(curCompany, request.getPassword(), request.getCompanyName(), request.getBusinessNumber());
+
+        int customCode = HttpStatus.OK.value();
+        CompanyDataResponseDto response = new CompanyDataResponseDto(customCode,
+                Message.PATCH_COMPANY_SUCCESS.getMessage(),
+                curCompany
         );
 
         return ResponseEntity

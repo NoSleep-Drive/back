@@ -29,7 +29,6 @@ public class CompanyController {
 
         String token = authHeader.substring(7);
         Company curCompany =  companyService.authCompany(token);
-        System.out.println(curCompany.getId());
         int customCode = HttpStatus.OK.value();
         CompanyDataResponseDto response = new CompanyDataResponseDto(customCode,
                 Message.GET_COMPANY_DATA_SUCCESS.getMessage(),
@@ -67,6 +66,27 @@ public class CompanyController {
                 customCode,
                 Message.LOGIN_SUCCESS.getMessage(),
                 token
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<SimpleResponse> me(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany =  companyService.authCompany(token);
+        companyService.deleteCompany(curCompany);
+        int customCode = HttpStatus.OK.value();
+
+        SimpleResponse response = new SimpleResponse(
+                customCode,
+                Message.DELETE_COMPANY_SUCCESS.getMessage()
         );
 
         return ResponseEntity

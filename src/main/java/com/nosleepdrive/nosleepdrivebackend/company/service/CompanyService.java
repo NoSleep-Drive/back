@@ -51,4 +51,8 @@ public class CompanyService {
         return companyRepository.findById(uid)
                 .orElseThrow(()->new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage()));
     }
+
+    public void deleteCompany(Company company) {
+        companyRepository.delete(company);
+    }
 }

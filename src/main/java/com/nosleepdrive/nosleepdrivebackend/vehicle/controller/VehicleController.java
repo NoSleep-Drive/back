@@ -2,6 +2,7 @@ package com.nosleepdrive.nosleepdrivebackend.vehicle.controller;
 
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
+import com.nosleepdrive.nosleepdrivebackend.common.PageParam;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyDataResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
@@ -9,13 +10,17 @@ import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleStatusDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.DefaultVehicleDataDto;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.VehicleListResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -106,6 +111,23 @@ public class VehicleController {
                 Message.UPDATE_VEHICLE_SUCCESS.getMessage()
         );
 
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<VehicleListResponseDto> getVehicles(@RequestHeader("Authorization") String authHeader,@Valid PageParam pageData) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+
+        int customCode = HttpStatus.OK.value();
+        VehicleListResponseDto response = new VehicleListResponseDto(customCode, Message.GET_VEHICLES_LIST.getMessage(),
+                curCompany.getVehicles().stream().skip(pageData.getPageIdx() * pageData.getPageSize()).limit(pageData.getPageSize()).collect(Collectors.toList()));
         return ResponseEntity
                 .status(HttpStatus.valueOf(customCode))
                 .body(response);

@@ -20,7 +20,7 @@ public class Driver {
     @Column(name = "end_time")
     private Date endTime;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vehicle", referencedColumnName = "id_vehicle", nullable = false)
     private Vehicle vehicle;
 }

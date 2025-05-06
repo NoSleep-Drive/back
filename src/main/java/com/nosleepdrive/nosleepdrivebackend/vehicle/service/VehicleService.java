@@ -37,6 +37,7 @@ public class VehicleService {
                 .idHardware(request.getDeviceUid())
                 .carNumber(request.getVehicleNumber())
                 .errorState(0)
+                .rentTime(null)
                 .createdDate(new Date())
                 .company(company)
                 .build();

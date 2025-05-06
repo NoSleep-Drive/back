@@ -2,6 +2,7 @@ package com.nosleepdrive.nosleepdrivebackend.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -25,7 +26,7 @@ public class Token {
         try{
             Map<String, Object> payload = new HashMap<>();
             payload.put("uid", uid);
-            payload.put("exp", expirationEpochSeconds);
+            payload.put("exp", expirationEpochSeconds+System.currentTimeMillis()/1000);
 
             String payloadJson = objectMapper.writeValueAsString(payload);
             String encodedPayload = Base64.getUrlEncoder().withoutPadding().encodeToString(payloadJson.getBytes());
@@ -39,27 +40,35 @@ public class Token {
         }
     }
 
-    public static boolean verifyToken(String token) {
+    public static long verifyToken(String token) {
         try{
             String[] parts = token.split("\\.");
-            if (parts.length != 2) return false;
+            if (parts.length != 2) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
 
             String encodedPayload = parts[0];
             String receivedSignature = parts[1];
 
             String expectedSignature = sign(encodedPayload, SECRET_KEY);
-            if (!expectedSignature.equals(receivedSignature)) return false;
+            if (!expectedSignature.equals(receivedSignature)) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
 
             String payloadJson = new String(Base64.getUrlDecoder().decode(encodedPayload));
             Map<String, Object> payload = objectMapper.readValue(payloadJson, Map.class);
 
             long exp = ((Number) payload.get("exp")).longValue();
-            return System.currentTimeMillis() / 1000 < exp;
+            if(System.currentTimeMillis() / 1000 >= exp){
+                throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+            }
+            return Long.parseLong(payload.get("uid").toString());
         }
-            catch (Exception e) {
+        catch(CustomError e){
+            throw e;
+        }
+        catch (Exception e) {
             throw new CustomError(BAD_REQUEST.value(), Message.ERR_IN_TOKEN.getMessage());
         }
     }
+
+
 
     private static String sign(String data, String secret) {
         try {

@@ -1,10 +1,13 @@
 package com.nosleepdrive.nosleepdrivebackend.company.controller;
 
+import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
+import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyDataResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyLoginRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanyLoginResponseDto;
 import com.nosleepdrive.nosleepdrivebackend.company.dto.CompanySignUpRequestDto;
+import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +21,24 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
     private final CompanyService companyService;
 
-    @GetMapping("/")
-    public String hello() {
-        return "Hello, NoSleepDrive! it's a company!";
+    @GetMapping("/me")
+    public ResponseEntity<CompanyDataResponseDto> getCompanyData(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany =  companyService.authCompany(token);
+        System.out.println(curCompany.getId());
+        int customCode = HttpStatus.OK.value();
+        CompanyDataResponseDto response = new CompanyDataResponseDto(customCode,
+                Message.GET_COMPANY_DATA_SUCCESS.getMessage(),
+                curCompany
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
     }
 
 

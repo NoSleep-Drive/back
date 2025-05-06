@@ -44,4 +44,11 @@ public class CompanyService {
         }
         return Token.generateToken(target.getIdCompany().toString(), expireTime);
     }
+
+    public Company authCompany(String token){
+        Long uid = Token.verifyToken(token);
+
+        return companyRepository.findById(uid)
+                .orElseThrow(()->new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage()));
+    }
 }

@@ -71,7 +71,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<SimpleResponse> me(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<SimpleResponse> delete(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }

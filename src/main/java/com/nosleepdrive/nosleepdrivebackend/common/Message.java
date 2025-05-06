@@ -20,7 +20,10 @@ public enum Message{
     ERR_SQL_DATA_INTEGRITY_VIOLATION("데이터 무결성 위반."),
     ERR_SQL_NOT_FOUND("데이터 찾기 실패."),
     ERR_SQL_DEPLICATION("이미 존재하는 값입니다."),
-    ERR_SQL_FK("존재하지 않는 외래키 참조입니다.");
+    ERR_SQL_FK("존재하지 않는 외래키 참조입니다."),
+
+    CREATE_VEHICLE_SUCCESS("차량이 등록되었습니다."),
+    ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다.");
 
     private final String message;
 }

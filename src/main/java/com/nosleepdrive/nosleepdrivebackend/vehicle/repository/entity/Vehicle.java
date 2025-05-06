@@ -2,10 +2,16 @@ package com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity;
 
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Vehicle {
     @Id

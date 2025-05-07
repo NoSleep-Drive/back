@@ -3,6 +3,8 @@ package com.nosleepdrive.nosleepdrivebackend.vehicle.service;
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
+import com.nosleepdrive.nosleepdrivebackend.driver.repository.DriverRepository;
+import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.ChangeVehicleStatusDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.DefaultVehicleDataDto;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.VehicleRepository;
@@ -29,6 +31,7 @@ public class VehicleService {
         cameraAndSpeakerAndAccelerationSensorError,
     }
     private final VehicleRepository vehicleRepository;
+    private final DriverRepository driverRepository;
 
     public void createVehicle(DefaultVehicleDataDto request, Company company) {
         if (vehicleRepository.existsByIdHardware(request.getDeviceUid())||vehicleRepository.existsByCarNumber(request.getVehicleNumber())) {
@@ -118,5 +121,28 @@ public class VehicleService {
         }
 
         return result;
+    }
+
+    public void startRent(String vehicleNumber, Company company) {
+        Vehicle vehicle = vehicleRepository.findByCarNumber(vehicleNumber);
+        if(vehicle==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(vehicle.getCompany() != company){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+
+        Date curDate = new Date();
+        vehicle.setRentTime(curDate);
+        vehicle.getDrivers().forEach(driver -> {
+            driver.setEndTime(curDate);
+        });
+        Driver driver =  Driver.builder()
+                .startTime(curDate)
+                .endTime(null)
+                .vehicle(vehicle)
+                .build();
+
+        driverRepository.save(driver);
     }
 }

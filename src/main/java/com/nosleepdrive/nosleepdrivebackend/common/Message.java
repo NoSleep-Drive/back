@@ -29,6 +29,7 @@ public enum Message{
     GET_VEHICLES_LIST("차량 목록 조회 성공."),
     GET_VEHICLES_COUNT_SUCCESS("등록 차량 수 조회 성공"),
     GET_ABNORMAL_VEHICLES_COUNT_SUCCESS("센서 이상 차량 수 조회 성공"),
+    RENT_SUCCESS("차량 렌트를 시작했습니다."),
     ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다."),
     ERR_NOT_FOUND_VEHICLE("해당 차량을 찾을 수 없습니다."),
     ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다.");

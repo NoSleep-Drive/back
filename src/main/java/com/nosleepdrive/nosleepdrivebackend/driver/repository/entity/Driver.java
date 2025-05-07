@@ -2,11 +2,17 @@ package com.nosleepdrive.nosleepdrivebackend.driver.repository.entity;
 
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

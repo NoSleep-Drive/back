@@ -93,6 +93,27 @@ public class VehicleController {
                 .body(response);
     }
 
+    @PostMapping("/{vehicleNumber}/rent")
+    public ResponseEntity<SimpleResponse> rentVehicle(@RequestHeader("Authorization") String authHeader, @PathVariable String vehicleNumber) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+
+        vehicleService.startRent(vehicleNumber, curCompany);
+
+        int customCode = HttpStatus.OK.value();
+        SimpleResponse response = new SimpleResponse(customCode,
+                Message.RENT_SUCCESS.getMessage()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.valueOf(customCode))
+                .body(response);
+    }
+
     @PatchMapping("/{deviceUid}")
     public ResponseEntity<SimpleResponse> changeVehicle(@RequestHeader("Authorization") String authHeader, @PathVariable String deviceUid, @Valid @RequestBody ChangeVehicleDto request) {
 

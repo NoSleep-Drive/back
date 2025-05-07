@@ -123,6 +123,7 @@ public class VehicleService {
         return result;
     }
 
+    @Transactional
     public void startRent(String vehicleNumber, Company company) {
         Vehicle vehicle = vehicleRepository.findByCarNumber(vehicleNumber);
         if(vehicle==null) {
@@ -131,10 +132,16 @@ public class VehicleService {
         if(vehicle.getCompany() != company){
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
+        if(vehicle.getRentTime() != null){
+            throw new CustomError(HttpStatus.CONFLICT.value(), Message.ERR_ALREADY_RENT.getMessage());
+        }
+
 
         Date curDate = new Date();
         vehicle.setRentTime(curDate);
-        vehicle.getDrivers().forEach(driver -> {
+        vehicle.getDrivers().stream().filter(driver -> {
+            return driver.getEndTime() == null;
+        }).forEach(driver -> {
             driver.setEndTime(curDate);
         });
         Driver driver =  Driver.builder()
@@ -144,5 +151,25 @@ public class VehicleService {
                 .build();
 
         driverRepository.save(driver);
+    }
+
+    @Transactional
+    public void endRent(String vehicleNumber, Company company) {
+        Vehicle vehicle = vehicleRepository.findByCarNumber(vehicleNumber);
+        if(vehicle==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(vehicle.getCompany() != company){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+        if(vehicle.getRentTime() == null){
+            throw new CustomError(HttpStatus.CONFLICT.value(), Message.ERR_NOT_RENT.getMessage());
+        }
+
+        Date curDate = new Date();
+        vehicle.setRentTime(null);
+        vehicle.getDrivers().stream().filter(driver-> {return driver.getEndTime() == null;}).forEach(driver -> {
+            driver.setEndTime(curDate);
+        });
     }
 }

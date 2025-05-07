@@ -30,9 +30,12 @@ public enum Message{
     GET_VEHICLES_COUNT_SUCCESS("등록 차량 수 조회 성공"),
     GET_ABNORMAL_VEHICLES_COUNT_SUCCESS("센서 이상 차량 수 조회 성공"),
     RENT_SUCCESS("차량 렌트를 시작했습니다."),
+    RETURN_SUCCESS("차량 반납이 완료되었습니다."),
     ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다."),
     ERR_NOT_FOUND_VEHICLE("해당 차량을 찾을 수 없습니다."),
-    ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다.");
+    ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다."),
+    ERR_ALREADY_RENT("이미 렌트 중인 차량입니다."),
+    ERR_NOT_RENT("렌트 중이 아닌 차량입니다.");
 
     private final String message;
 }

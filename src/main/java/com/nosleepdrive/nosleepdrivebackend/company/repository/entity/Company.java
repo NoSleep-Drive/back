@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,5 +37,17 @@ public class Company {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Vehicle> vehicles = new ArrayList<>();
+
+    public void updateCompany(String businessNumber, String companyName, String password) {
+        if(businessNumber != null) {
+            this.businessNumber = businessNumber;
+        }
+        if(companyName != null) {
+            this.companyName = companyName;
+        }
+        if(password != null){
+            this.password = password;
+        }
+    }
 }
 

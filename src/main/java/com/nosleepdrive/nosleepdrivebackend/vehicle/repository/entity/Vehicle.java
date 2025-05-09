@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Setter
 @Getter
 @Builder
 @NoArgsConstructor
@@ -48,4 +47,16 @@ public class Vehicle {
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Driver> drivers = new ArrayList<>();
+
+    public void updateCarNumber(String newCarNumber) {
+        this.carNumber = newCarNumber;
+    }
+
+    public void updateErrorState(int newErrorState) {
+        this.errorState = newErrorState;
+    }
+
+    public void updateRentTime(Date newRentTime) {
+        this.rentTime = newRentTime;
+    }
 }

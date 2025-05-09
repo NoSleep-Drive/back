@@ -70,7 +70,7 @@ public class VehicleService {
         if(vehicle.getCompany() != company){
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
-        vehicle.setCarNumber(carNumber);
+        vehicle.updateCarNumber(carNumber);
     }
 
     @Transactional
@@ -83,7 +83,7 @@ public class VehicleService {
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
         int status = getStatusCodeByDeviceState(request);
-        vehicle.setErrorState(status);
+        vehicle.updateErrorState(status);
     }
 
     private int getStatusCodeByDeviceState(ChangeVehicleStatusDto request){
@@ -138,11 +138,11 @@ public class VehicleService {
 
 
         Date curDate = new Date();
-        vehicle.setRentTime(curDate);
+        vehicle.updateRentTime(curDate);
         vehicle.getDrivers().stream().filter(driver -> {
             return driver.getEndTime() == null;
         }).forEach(driver -> {
-            driver.setEndTime(curDate);
+            driver.updateEndTime(curDate);
         });
         Driver driver =  Driver.builder()
                 .startTime(curDate)
@@ -167,9 +167,14 @@ public class VehicleService {
         }
 
         Date curDate = new Date();
-        vehicle.setRentTime(null);
-        vehicle.getDrivers().stream().filter(driver-> {return driver.getEndTime() == null;}).forEach(driver -> {
-            driver.setEndTime(curDate);
-        });
+        vehicle.updateRentTime(null);
+        vehicle.getDrivers().stream()
+                .filter(driver-> {
+                    return driver.getEndTime() == null;
+                })
+                .forEach(driver -> {
+                    driver.updateEndTime(curDate);
+                }
+        );
     }
 }

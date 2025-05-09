@@ -19,37 +19,35 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @GetMapping("/me")
-    public ResponseEntity<CompanyDataResponseDto> getCompanyData(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<SimpleResponse<CompanyDataDto>> getCompanyData(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
 
         String token = authHeader.substring(7);
         Company curCompany =  companyService.authCompany(token);
-        int customCode = HttpStatus.OK.value();
-        CompanyDataResponseDto response = new CompanyDataResponseDto(customCode,
+
+        SimpleResponse<CompanyDataDto> response = SimpleResponse.withData(
                 Message.GET_COMPANY_DATA_SUCCESS.getMessage(),
-                curCompany
-                );
+                CompanyDataDto.of(curCompany)
+        );
 
         return ResponseEntity
-                .status(HttpStatus.valueOf(customCode))
+                .status(HttpStatus.OK.value())
                 .body(response);
     }
 
 
     @PostMapping("/signup")
-    public ResponseEntity<SimpleResponse> signup(@Valid @RequestBody CompanySignUpRequestDto request) {
+    public ResponseEntity<SimpleResponse<?>> signup(@Valid @RequestBody CompanySignUpRequestDto request) {
         companyService.signup(request);
 
-        int customCode = HttpStatus.CREATED.value();
-        SimpleResponse response = new SimpleResponse(
-                customCode,
+        SimpleResponse<?> response = SimpleResponse.withoutData(
                 Message.SIGNUP_SUCCESS.getMessage()
         );
 
         return ResponseEntity
-                .status(HttpStatus.valueOf(customCode))
+                .status(HttpStatus.CREATED.value())
                 .body(response);
     }
 
@@ -58,20 +56,18 @@ public class CompanyController {
     public ResponseEntity<CompanyLoginResponseDto> login(@Valid @RequestBody CompanyLoginRequestDto request){
         String token = companyService.login(request);
 
-        int customCode = HttpStatus.OK.value();
         CompanyLoginResponseDto response = new CompanyLoginResponseDto(
-                customCode,
                 Message.LOGIN_SUCCESS.getMessage(),
                 token
         );
 
         return ResponseEntity
-                .status(HttpStatus.valueOf(customCode))
+                .status(HttpStatus.OK.value())
                 .body(response);
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<SimpleResponse> delete(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<SimpleResponse<?>> delete(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
@@ -79,20 +75,18 @@ public class CompanyController {
         String token = authHeader.substring(7);
         Company curCompany =  companyService.authCompany(token);
         companyService.deleteCompany(curCompany);
-        int customCode = HttpStatus.OK.value();
 
-        SimpleResponse response = new SimpleResponse(
-                customCode,
+        SimpleResponse<?> response = SimpleResponse.withoutData(
                 Message.DELETE_COMPANY_SUCCESS.getMessage()
         );
 
         return ResponseEntity
-                .status(HttpStatus.valueOf(customCode))
+                .status(HttpStatus.OK.value())
                 .body(response);
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<CompanyDataResponseDto> changeCompanyData(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody CompanyChangeRequestDto request) {
+    public ResponseEntity<SimpleResponse<CompanyDataDto>> changeCompanyData(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody CompanyChangeRequestDto request) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
@@ -101,14 +95,13 @@ public class CompanyController {
         Company curCompany =  companyService.authCompany(token);
         companyService.updateCompany(curCompany, request.getPassword(), request.getCompanyName(), request.getBusinessNumber());
 
-        int customCode = HttpStatus.OK.value();
-        CompanyDataResponseDto response = new CompanyDataResponseDto(customCode,
+        SimpleResponse<CompanyDataDto> response = SimpleResponse.withData(
                 Message.PATCH_COMPANY_SUCCESS.getMessage(),
-                curCompany
+                CompanyDataDto.of(curCompany)
         );
 
         return ResponseEntity
-                .status(HttpStatus.valueOf(customCode))
+                .status(HttpStatus.OK.value())
                 .body(response);
     }
 }

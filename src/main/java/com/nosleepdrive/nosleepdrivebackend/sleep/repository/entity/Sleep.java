@@ -22,7 +22,7 @@ public class Sleep {
     private Date sleepTime;
 
     @NonNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_driver", referencedColumnName = "id_driver", nullable = false)
     private Driver driver;
 }

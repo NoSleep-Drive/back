@@ -59,14 +59,9 @@ public class CompanyService {
 
     @Transactional()
     public void updateCompany(Company company, String password, String companyName, String businessNumber) {
-        if(businessNumber != null) {
-            company.setBusinessNumber(businessNumber);
-        }
-        if(companyName != null) {
-            company.setCompanyName(companyName);
-        }
-        if(password != null){
-            company.setPassword(hash.HashEncode(password));
-        }
+        company.updateCompany(
+                companyName
+                , businessNumber
+                , password!=null?hash.HashEncode(password):null);
     }
 }

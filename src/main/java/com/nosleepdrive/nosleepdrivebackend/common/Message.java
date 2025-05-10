@@ -20,7 +20,23 @@ public enum Message{
     ERR_SQL_DATA_INTEGRITY_VIOLATION("데이터 무결성 위반."),
     ERR_SQL_NOT_FOUND("데이터 찾기 실패."),
     ERR_SQL_DEPLICATION("이미 존재하는 값입니다."),
-    ERR_SQL_FK("존재하지 않는 외래키 참조입니다.");
+    ERR_SQL_FK("존재하지 않는 외래키 참조입니다."),
+
+    CREATE_VEHICLE_SUCCESS("차량이 등록되었습니다."),
+    DELETE_VEHICLE_SUCCESS("차량 등록이 삭제되었습니다."),
+    UPDATE_VEHICLE_SUCCESS("차량 정보가 수정되었습니다."),
+    UPDATE_VEHICLE_STATUS_SUCCESS("장치 상태가 업데이트되었습니다."),
+    GET_VEHICLES_LIST("차량 목록 조회 성공."),
+    GET_VEHICLES_COUNT_SUCCESS("등록 차량 수 조회 성공"),
+    GET_ABNORMAL_VEHICLES_COUNT_SUCCESS("센서 이상 차량 수 조회 성공"),
+    RENT_SUCCESS("차량 렌트를 시작했습니다."),
+    RETURN_SUCCESS("차량 반납이 완료되었습니다."),
+    GET_DRIVERS_LIST_SUCCESS("운전자 목록 조회 성공"),
+    ERR_DEPLICATION_VEHICLE("이미 등록된 차량입니다."),
+    ERR_NOT_FOUND_VEHICLE("해당 차량을 찾을 수 없습니다."),
+    ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다."),
+    ERR_ALREADY_RENT("이미 렌트 중인 차량입니다."),
+    ERR_NOT_RENT("렌트 중이 아닌 차량입니다.");
 
     private final String message;
 }

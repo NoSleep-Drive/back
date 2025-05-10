@@ -165,7 +165,8 @@ public class VehicleController {
                 curCompany.getVehicles()
                         .stream()
                         .skip((long) pageData.getPageIdx() * pageData.getPageSize())
-                        .limit(pageData.getPageSize()).map(data->VehicleDataDto.from(data))
+                        .limit(pageData.getPageSize())
+                        .map(data->VehicleDataDto.from(data))
                         .collect(Collectors.toList())
         );
 
@@ -213,7 +214,7 @@ public class VehicleController {
     }
 
     @GetMapping("/{deviceUid}/drivers")
-    public ResponseEntity<SimpleResponse<List<DriverDataDto>>> getDriverList(@RequestHeader("Authorization") String authHeader, @PathVariable String deviceUid) {
+    public ResponseEntity<SimpleResponse<List<DriverDataDto>>> getDriverList(@RequestHeader("Authorization") String authHeader, @PathVariable String deviceUid,@Valid PageParam pageData) {
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
@@ -226,7 +227,11 @@ public class VehicleController {
 
         SimpleResponse<List<DriverDataDto>> response = SimpleResponse.withData(
                 Message.GET_DRIVERS_LIST_SUCCESS.getMessage(),
-                drivers.stream().map(data->DriverDataDto.of(data)).toList()
+                drivers.stream()
+                        .skip((long) pageData.getPageIdx() * pageData.getPageSize())
+                        .limit(pageData.getPageSize())
+                        .map(data->DriverDataDto.of(data))
+                        .toList()
         );
 
         return ResponseEntity

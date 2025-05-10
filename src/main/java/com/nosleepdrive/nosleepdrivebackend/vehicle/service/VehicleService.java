@@ -1,6 +1,7 @@
 package com.nosleepdrive.nosleepdrivebackend.vehicle.service;
 
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
+import com.nosleepdrive.nosleepdrivebackend.common.Hash;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.DriverRepository;
@@ -148,6 +149,7 @@ public class VehicleService {
                 .startTime(curDate)
                 .endTime(null)
                 .vehicle(vehicle)
+                .driverHash(Hash.generateRandomSHA256Hash())
                 .build();
 
         driverRepository.save(driver);
@@ -176,5 +178,21 @@ public class VehicleService {
                     driver.updateEndTime(curDate);
                 }
         );
+    }
+
+    @Transactional
+    public List<Driver> getDriverList(String deviceUid, Company company){
+        Vehicle vehicle = vehicleRepository.findByIdHardware(deviceUid);
+        if(vehicle==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(vehicle.getCompany() != company){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+        if(vehicle.getRentTime() == null){
+            throw new CustomError(HttpStatus.CONFLICT.value(), Message.ERR_NOT_RENT.getMessage());
+        }
+
+        return vehicle.getDrivers();
     }
 }

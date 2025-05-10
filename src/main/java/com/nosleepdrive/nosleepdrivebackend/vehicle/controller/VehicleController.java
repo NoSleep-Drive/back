@@ -6,6 +6,8 @@ import com.nosleepdrive.nosleepdrivebackend.common.PageParam;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
+import com.nosleepdrive.nosleepdrivebackend.driver.dto.DriverDataDto;
+import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.dto.*;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
@@ -209,4 +211,27 @@ public class VehicleController {
                 .status(HttpStatus.OK.value())
                 .body(response);
     }
+
+    @GetMapping("/{deviceUid}/drivers")
+    public ResponseEntity<SimpleResponse<List<DriverDataDto>>> getDriverList(@RequestHeader("Authorization") String authHeader, @PathVariable String deviceUid) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+
+        List<Driver> drivers = vehicleService.getDriverList(deviceUid, curCompany);
+
+        SimpleResponse<List<DriverDataDto>> response = SimpleResponse.withData(
+                Message.GET_DRIVERS_LIST_SUCCESS.getMessage(),
+                drivers.stream().map(data->DriverDataDto.of(data)).toList()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(response);
+    }
+
 }

@@ -28,6 +28,10 @@ public class Driver {
     @Column(name = "end_time")
     private Date endTime;
 
+    @NonNull
+    @Column(name = "driver_hash", nullable = false, updatable = false, unique = true, length = 64)
+    private String driverHash;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vehicle", referencedColumnName = "id_vehicle", nullable = false)
     private Vehicle vehicle;

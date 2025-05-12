@@ -3,6 +3,7 @@ package com.nosleepdrive.nosleepdrivebackend.sleep.service;
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
+import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SaveVideoRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +49,11 @@ public class SleepService {
             throw e;
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_INVALID_VIDEO.getMessage());
         }
+    }
+
+    public int getTodaySleepCount(Company curCompany){
+        return sleepRepository.getCountSleepsByCompanyIdAndDate(curCompany.getIdCompany(), new Date());
     }
 }

@@ -1,12 +1,58 @@
 package com.nosleepdrive.nosleepdrivebackend.sleep.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
+import com.nosleepdrive.nosleepdrivebackend.common.Message;
+import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
+import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
+import com.nosleepdrive.nosleepdrivebackend.driver.service.DriverService;
+import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SaveVideoRequestDto;
+import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
+import com.nosleepdrive.nosleepdrivebackend.sleep.service.SleepService;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController()
+@RequiredArgsConstructor
+@RequestMapping("/sleep")
 public class SleepController {
-    @GetMapping("/sleep")
-    public String hello() {
-        return "Hello, NoSleepDrive!\n it's a sleep!";
+    private final VehicleService vehicleService;
+    private final DriverService driverService;
+    private final SleepRepository sleepRepository;
+    private final SleepService sleepService;
+
+    @PostMapping("")
+    public ResponseEntity<SimpleResponse<?>> saveSleepData(@RequestHeader("Authorization") String authHeader,
+                                                           @Valid SaveVideoRequestDto body) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Vehicle curVehicle = vehicleService.authVehicle(token);
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            body.setDetectedAtDate(dateFormat.parse(body.getDetectedAt()));
+        } catch (ParseException e) {
+            throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_INVALID_INPUT.getMessage());
+        }
+
+        Driver curDriver = driverService.getDriver(curVehicle, body.getDetectedAtDate());
+        sleepService.saveSleepData(curDriver, body);
+
+        SimpleResponse<?> response = SimpleResponse.withoutData(Message.SAVE_SLEEP_DATA_SUCCESS.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CREATED.value())
+                .body(response);
     }
 }

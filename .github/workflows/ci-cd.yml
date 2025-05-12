@@ -66,6 +66,7 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "SALT_VALUE=${{ secrets.SALT_VALUE }}" >> .env
           echo "TOKEN_KEY=${{ secrets.TOKEN_KEY }}" >> .env
+          echo "VIDEO_PATH=${{ secrets.VIDEO_PATH }}" >> .env
           
 
       - name: Check .env file exists

@@ -3,6 +3,7 @@ package com.nosleepdrive.nosleepdrivebackend.vehicle.service;
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
 import com.nosleepdrive.nosleepdrivebackend.common.Hash;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
+import com.nosleepdrive.nosleepdrivebackend.common.Token;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.DriverRepository;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
@@ -194,5 +195,13 @@ public class VehicleService {
         }
 
         return vehicle.getDrivers();
+    }
+
+    public Vehicle authVehicle(String token) {
+        String uid = Token.verifyTokenHardware(token);
+
+        Vehicle data = vehicleRepository.findByIdHardware(uid);
+        if(data == null) throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        return data;
     }
 }

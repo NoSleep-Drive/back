@@ -1,9 +1,6 @@
 package com.nosleepdrive.nosleepdrivebackend.vehicle.controller;
 
-import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
-import com.nosleepdrive.nosleepdrivebackend.common.Message;
-import com.nosleepdrive.nosleepdrivebackend.common.PageParam;
-import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
+import com.nosleepdrive.nosleepdrivebackend.common.*;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.driver.dto.DriverDataDto;
@@ -239,4 +236,8 @@ public class VehicleController {
                 .body(response);
     }
 
+    @GetMapping("/{deviceUid}/test/getToken")
+    public String getToken(@PathVariable String deviceUid) {
+        return Token.generateToken(deviceUid, 60*60*24*30*12*5); // 5년
+    }
 }

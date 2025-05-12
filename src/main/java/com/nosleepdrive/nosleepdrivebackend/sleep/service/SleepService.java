@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +56,9 @@ public class SleepService {
 
     public int getTodaySleepCount(Company curCompany){
         return sleepRepository.getCountSleepsByCompanyIdAndDate(curCompany.getIdCompany(), new Date());
+    }
+
+    public List<Sleep> getRecentSleeps(Company curCompany){
+        return sleepRepository.getRecentSleep(curCompany.getIdCompany());
     }
 }

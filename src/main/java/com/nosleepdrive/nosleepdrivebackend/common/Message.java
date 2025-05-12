@@ -41,6 +41,7 @@ public enum Message{
 
     SAVE_SLEEP_DATA_SUCCESS("졸음 감지 데이터가 저장되었습니다."),
     GET_TODAY_SLEEP_COUNT_SUCCESS("오늘 졸음 감지 횟수 조회 성공."),
+    GET_RECENT_SLEEP_DATA_SUCCESS("최근 졸음 감지 데이터 조회 성공."),
     ERR_INVALID_VIDEO("비디오 데이터를 다시 받아야 합니다.");
 
     private final String message;

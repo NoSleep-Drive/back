@@ -1,9 +1,6 @@
 package com.nosleepdrive.nosleepdrivebackend.sleep.controller;
 
-import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
-import com.nosleepdrive.nosleepdrivebackend.common.Message;
-import com.nosleepdrive.nosleepdrivebackend.common.PageParam;
-import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
+import com.nosleepdrive.nosleepdrivebackend.common.*;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
@@ -19,18 +16,25 @@ import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.zip.ZipOutputStream;
 
 @RestController()
 @RequiredArgsConstructor
@@ -40,6 +44,7 @@ public class SleepController {
     private final DriverService driverService;
     private final CompanyService companyService;
     private final SleepService sleepService;
+    private final FileFunc fileFunc;
 
     @PostMapping("")
     public ResponseEntity<SimpleResponse<?>> saveSleepData(@RequestHeader("Authorization") String authHeader,
@@ -158,6 +163,27 @@ public class SleepController {
                 .headers(headers)
                 .contentLength(contentLength)
                 .body(new InputStreamResource(inputStream));
+    }
+
+    @GetMapping("/{id}/video/download")
+    public ResponseEntity<Resource> downloadOneVideo(@RequestHeader("Authorization") String authHeader, @PathVariable("id") long id){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        File videoFile = sleepService.getSleepVideoFile(curCompany, id);
+
+        String zipFilePath = "sleepData.zip";
+        FileFunc.returnFileData zipData = fileFunc.makeOneFileToZip(zipFilePath, videoFile);
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sleepData.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(zipData.fileSize)
+                .body(zipData.stream);
     }
 
     @GetMapping("/{sleepId}")

@@ -32,7 +32,7 @@ public class SleepService {
     @Transactional
     public void saveSleepData(Driver curDriver, SaveVideoRequestDto body){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
-        String dateValue = "/"+sdf.format(body.getDetectedAtDate())+"/";
+        String dateValue = sdf.format(body.getDetectedAtDate())+"/";
         File directory = new File(uploadDir+dateValue);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -40,7 +40,6 @@ public class SleepService {
 
         try {
             String totalPath = uploadDir +dateValue+ body.getVideoFile().getOriginalFilename();
-            System.out.println("Path: "+totalPath);
             File destinationFile = new File(totalPath);
             body.getVideoFile().transferTo(destinationFile);
 

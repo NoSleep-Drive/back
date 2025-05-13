@@ -36,7 +36,17 @@ public enum Message{
     ERR_NOT_FOUND_VEHICLE("해당 차량을 찾을 수 없습니다."),
     ERR_FORBIDDEN("해당 요청에 대한 권한이 없습니다."),
     ERR_ALREADY_RENT("이미 렌트 중인 차량입니다."),
-    ERR_NOT_RENT("렌트 중이 아닌 차량입니다.");
+    ERR_NOT_RENT("렌트 중이 아닌 차량입니다."),
+
+
+    SAVE_SLEEP_DATA_SUCCESS("졸음 감지 데이터가 저장되었습니다."),
+    GET_TODAY_SLEEP_COUNT_SUCCESS("오늘 졸음 감지 횟수 조회 성공."),
+    GET_RECENT_SLEEP_DATA_SUCCESS("최근 졸음 감지 데이터 조회 성공."),
+    GET_SLEEP_LIST_SUCCESS("졸음 감지 목록 조회 성공."),
+    GET_ONE_SLEEP_DATA_SUCCESS("졸음 감지 상세 조회 성공"),
+    ERR_INVALID_VIDEO("비디오 데이터를 다시 받아야 합니다."),
+    ERR_INVALID_VIDEO_PATH("해당 경로의 비디오 데이터를 찾을 수 없습니다."),
+    ERR_DURING_STREAM("스트림 생성 중 오류가 발생했습니다.");
 
     private final String message;
 }

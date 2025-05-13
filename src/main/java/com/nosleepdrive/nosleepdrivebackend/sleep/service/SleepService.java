@@ -71,4 +71,15 @@ public class SleepService {
                 data.getVehicleNumber(),
                 data.getDriverHash());
     }
+
+    public Sleep getSleep(Company curCompany, long sleepId) {
+        Sleep sleep = sleepRepository.findByIdSleep(sleepId);
+        if(sleep==null) {
+            throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
+        }
+        if(sleep.getDriver().getVehicle().getCompany() != curCompany){
+            throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
+        }
+        return sleep;
+    }
 }

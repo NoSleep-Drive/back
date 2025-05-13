@@ -43,6 +43,7 @@ public enum Message{
     GET_TODAY_SLEEP_COUNT_SUCCESS("오늘 졸음 감지 횟수 조회 성공."),
     GET_RECENT_SLEEP_DATA_SUCCESS("최근 졸음 감지 데이터 조회 성공."),
     GET_SLEEP_LIST_SUCCESS("졸음 감지 목록 조회 성공."),
+    GET_ONE_SLEEP_DATA_SUCCESS("졸음 감지 상세 조회 성공"),
     ERR_INVALID_VIDEO("비디오 데이터를 다시 받아야 합니다.");
 
     private final String message;

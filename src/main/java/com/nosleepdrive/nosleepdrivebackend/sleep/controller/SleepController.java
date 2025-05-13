@@ -21,12 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,13 +62,13 @@ public class SleepController {
     }
 
     @GetMapping("/today/count")
-    public ResponseEntity<SimpleResponse<TodaySleepCountDto>> getTodaySleepCount(@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<SimpleResponse<TodaySleepCountDto>> getTodaySleepCount(@RequestHeader("Authorization") String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
 
         String token = authHeader.substring(7);
-        Company curCompany =  companyService.authCompany(token);
+        Company curCompany = companyService.authCompany(token);
         int result = sleepService.getTodaySleepCount(curCompany);
         TodaySleepCountDto body = new TodaySleepCountDto(result);
         SimpleResponse<TodaySleepCountDto> response = SimpleResponse.withData(Message.GET_TODAY_SLEEP_COUNT_SUCCESS.getMessage(), body);
@@ -81,18 +78,18 @@ public class SleepController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getRecentSleepData(@RequestHeader("Authorization") String authHeader, @Valid PageParam pageData){
+    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getRecentSleepData(@RequestHeader("Authorization") String authHeader, @Valid PageParam pageData) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
 
         String token = authHeader.substring(7);
-        Company curCompany =  companyService.authCompany(token);
+        Company curCompany = companyService.authCompany(token);
 
         List<SleepDataDto> data = sleepService.getRecentSleeps(curCompany)
                 .stream()
                 .limit(pageData.getPageSize())
-                .map(sleepOne->SleepDataDto.of(sleepOne))
+                .map(sleepOne -> SleepDataDto.of(sleepOne))
                 .collect(Collectors.toList());
         SimpleResponse<List<SleepDataDto>> response = SimpleResponse.withData(Message.GET_RECENT_SLEEP_DATA_SUCCESS.getMessage(), data);
         return ResponseEntity
@@ -101,21 +98,38 @@ public class SleepController {
     }
 
     @GetMapping("")
-    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getRecentSleepData(@RequestHeader("Authorization") String authHeader, @Valid SleepListParamDto param){
+    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getSleepDataList(@RequestHeader("Authorization") String authHeader, @Valid SleepListParamDto param) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
 
         String token = authHeader.substring(7);
-        Company curCompany =  companyService.authCompany(token);
+        Company curCompany = companyService.authCompany(token);
 
         List<SleepDataDto> data = sleepService.getSleepList(curCompany, param)
                 .stream()
                 .skip(param.getPageIdx() * param.getPageSize())
                 .limit(param.getPageSize())
-                .map(sleepOne->SleepDataDto.of(sleepOne))
+                .map(sleepOne -> SleepDataDto.of(sleepOne))
                 .collect(Collectors.toList());
         SimpleResponse<List<SleepDataDto>> response = SimpleResponse.withData(Message.GET_SLEEP_LIST_SUCCESS.getMessage(), data);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(response);
+    }
+
+    @GetMapping("/{sleepId}")
+    public ResponseEntity<SimpleResponse<SleepDataDto>> getSleepData(@RequestHeader("Authorization") String authHeader, @PathVariable String sleepId) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        SleepDataDto data = SleepDataDto.of(
+                sleepService.getSleep(curCompany, Long.parseLong(sleepId))
+        );
+        SimpleResponse<SleepDataDto> response = SimpleResponse.withData(Message.GET_ONE_SLEEP_DATA_SUCCESS.getMessage(), data);
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(response);

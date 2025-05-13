@@ -1,6 +1,7 @@
 package com.nosleepdrive.nosleepdrivebackend.sleep.repository;
 
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.entity.Sleep;
+import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +38,6 @@ public interface SleepRepository extends JpaRepository<Sleep, Long> {
             @Param("endDate") Date endDate,
             @Param("vehicleNumber") String vehicleNumber,
             @Param("driverHash") String driverHash);
+
+    Sleep findByIdSleep(Long idSleep);
 }

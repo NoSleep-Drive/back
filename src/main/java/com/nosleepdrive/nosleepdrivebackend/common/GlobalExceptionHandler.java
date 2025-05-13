@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomError.class)
     public ResponseEntity<SimpleResponse<?>> handleCustomException(CustomError ex, HttpServletResponse res) {
         try {
-            if (ex.getMessage().compareTo(String.valueOf(Message.ERR_INVALID_VIDEO)) == 0) {
+            if (ex.getMessage().compareTo(Message.ERR_INVALID_VIDEO.getMessage()) == 0) {
                 res.reset();
                 res.getOutputStream().close();
             }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -99,5 +100,25 @@ public class SleepService {
             throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_INVALID_VIDEO_PATH.getMessage());
         }
         return videoFile;
+    }
+
+    public List<File> getSleepVideoFiles(Company curCompany, List<Long> Ids) {
+        List<File> result = new LinkedList<>();
+        List<Sleep> sleeps = sleepRepository.getSleepsByIdSleepIsIn(Ids);
+        for(Sleep sleep: sleeps){
+            if(sleep==null) {
+                continue;
+            }
+            if(sleep.getDriver().getVehicle().getCompany() != curCompany){
+                continue;
+            }
+            File videoFile = new File(sleep.getSleepVideoPath());
+            if (!videoFile.exists()) {
+                continue;
+            }
+            result.add(videoFile);
+        }
+
+        return result;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public interface SleepRepository extends JpaRepository<Sleep, Long> {
             @Param("endDate") Date endDate,
             @Param("vehicleNumber") String vehicleNumber,
             @Param("driverHash") String driverHash);
+
+    @Query("SELECT s FROM Sleep s WHERE s.idSleep IN (:idSleeps)")
+    List<Sleep> getSleepsByIdSleepIsIn(@Param("idSleeps") Collection<Long> idSleeps);
 
     Sleep findByIdSleep(Long idSleep);
 }

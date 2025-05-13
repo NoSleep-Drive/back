@@ -5,10 +5,7 @@ import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.driver.service.DriverService;
-import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SaveVideoRequestDto;
-import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SleepDataDto;
-import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SleepListParamDto;
-import com.nosleepdrive.nosleepdrivebackend.sleep.dto.TodaySleepCountDto;
+import com.nosleepdrive.nosleepdrivebackend.sleep.dto.*;
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
 import com.nosleepdrive.nosleepdrivebackend.sleep.service.SleepService;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
@@ -177,6 +174,26 @@ public class SleepController {
 
         String zipFilePath = "sleepData.zip";
         FileFunc.returnFileData zipData = fileFunc.makeOneFileToZip(zipFilePath, videoFile);
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sleepData.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(zipData.fileSize)
+                .body(zipData.stream);
+    }
+
+    @PostMapping("/videos/download")
+    public ResponseEntity<Resource> downloadVideos(@RequestHeader("Authorization") String authHeader, @RequestBody VideoIdsRequestDto ids){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        List<File> videoFile = sleepService.getSleepVideoFiles(curCompany, ids.getIds());
+        String zipFilePath = "sleepData.zip";
+        FileFunc.returnFileData zipData = fileFunc.makeFilesToZip(zipFilePath, videoFile);
 
 
         return ResponseEntity.ok()

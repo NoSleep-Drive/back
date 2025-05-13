@@ -18,10 +18,15 @@ import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -116,6 +121,43 @@ public class SleepController {
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(response);
+    }
+
+    @GetMapping("/{id}/video/stream")
+    public ResponseEntity<InputStreamResource> getVideoStream(@RequestHeader("Authorization") String authHeader, @PathVariable("id") long id) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        File videoFile = sleepService.getSleepVideoFile(curCompany, id);
+        long fileLength = videoFile.length();
+        String contentType = "video/mp4";
+        long rangeStart = 0;
+        long rangeEnd = fileLength - 1;
+
+        if (rangeEnd > fileLength - 1) {
+            rangeEnd = fileLength - 1;
+        }
+
+        long contentLength = rangeEnd - rangeStart + 1;
+        InputStream inputStream;
+        try {
+            inputStream = new FileInputStream(videoFile);
+            inputStream.skip(rangeStart);
+        }
+        catch(Exception e){
+            throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_DURING_STREAM.getMessage());
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", contentType);
+        headers.add("Accept-Ranges", "bytes");
+        headers.add("Content-Range", "bytes " + rangeStart + "-" + rangeEnd + "/" + fileLength);
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                .headers(headers)
+                .contentLength(contentLength)
+                .body(new InputStreamResource(inputStream));
     }
 
     @GetMapping("/{sleepId}")

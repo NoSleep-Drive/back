@@ -23,4 +23,18 @@ public interface SleepRepository extends JpaRepository<Sleep, Long> {
             "WHERE c.idCompany = :companyId " +
             "ORDER BY s.sleepTime DESC ")
     List<Sleep> getRecentSleep(@Param("companyId") Long companyId);
+
+    @Query("SELECT s FROM Sleep s " +
+            "WHERE (:companyId = s.driver.vehicle.company.idCompany) " +
+            "AND (:startDate IS NULL OR s.sleepTime >= :startDate) " +
+            "AND (:endDate IS NULL OR s.sleepTime <= :endDate) " +
+            "AND (:vehicleNumber IS NULL OR s.driver.vehicle.carNumber = :vehicleNumber) " +
+            "AND (:driverHash IS NULL OR s.driver.driverHash = :driverHash)"+
+            "ORDER BY s.sleepTime DESC ")
+    List<Sleep> getFilteredSleepData(
+            @Param("companyId") Long companyId,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("vehicleNumber") String vehicleNumber,
+            @Param("driverHash") String driverHash);
 }

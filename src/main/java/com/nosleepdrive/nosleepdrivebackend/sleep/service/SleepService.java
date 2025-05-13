@@ -6,6 +6,7 @@ import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SaveVideoRequestDto;
+import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SleepListParamDto;
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.entity.Sleep;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,14 @@ public class SleepService {
 
     public List<Sleep> getRecentSleeps(Company curCompany){
         return sleepRepository.getRecentSleep(curCompany.getIdCompany());
+    }
+
+    public List<Sleep> getSleepList(Company curCompany, SleepListParamDto data){
+        return sleepRepository.getFilteredSleepData(
+                curCompany.getIdCompany(),
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getVehicleNumber(),
+                data.getDriverHash());
     }
 }

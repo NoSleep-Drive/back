@@ -10,6 +10,7 @@ import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.driver.service.DriverService;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SaveVideoRequestDto;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SleepDataDto;
+import com.nosleepdrive.nosleepdrivebackend.sleep.dto.SleepListParamDto;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.TodaySleepCountDto;
 import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
 import com.nosleepdrive.nosleepdrivebackend.sleep.service.SleepService;
@@ -94,6 +95,27 @@ public class SleepController {
                 .map(sleepOne->SleepDataDto.of(sleepOne))
                 .collect(Collectors.toList());
         SimpleResponse<List<SleepDataDto>> response = SimpleResponse.withData(Message.GET_RECENT_SLEEP_DATA_SUCCESS.getMessage(), data);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(response);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getRecentSleepData(@RequestHeader("Authorization") String authHeader, @Valid SleepListParamDto param){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany =  companyService.authCompany(token);
+
+        List<SleepDataDto> data = sleepService.getSleepList(curCompany, param)
+                .stream()
+                .skip(param.getPageIdx() * param.getPageSize())
+                .limit(param.getPageSize())
+                .map(sleepOne->SleepDataDto.of(sleepOne))
+                .collect(Collectors.toList());
+        SimpleResponse<List<SleepDataDto>> response = SimpleResponse.withData(Message.GET_SLEEP_LIST_SUCCESS.getMessage(), data);
         return ResponseEntity
                 .status(HttpStatus.OK.value())
                 .body(response);

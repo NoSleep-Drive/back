@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -30,13 +31,16 @@ public class SleepService {
 
     @Transactional
     public void saveSleepData(Driver curDriver, SaveVideoRequestDto body){
-        File directory = new File(uploadDir);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+        String dateValue = "/"+sdf.format(body.getDetectedAtDate())+"/";
+        File directory = new File(uploadDir+dateValue);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
         try {
-            String totalPath = uploadDir + body.getVideoFile().getOriginalFilename();
+            String totalPath = uploadDir +dateValue+ body.getVideoFile().getOriginalFilename();
+            System.out.println("Path: "+totalPath);
             File destinationFile = new File(totalPath);
             body.getVideoFile().transferTo(destinationFile);
 

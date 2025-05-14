@@ -1,6 +1,7 @@
 package com.nosleepdrive.nosleepdrivebackend.common;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(CustomError.class)
-    public ResponseEntity<SimpleResponse<?>> handleCustomException(CustomError ex) {
-        SimpleResponse<?> response = SimpleResponse.withoutData(ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getStatus()));
+    public ResponseEntity<SimpleResponse<?>> handleCustomException(CustomError ex, HttpServletResponse res) {
+        try {
+            if (ex.getMessage().compareTo(Message.ERR_INVALID_VIDEO.getMessage()) == 0) {
+                res.reset();
+                res.getOutputStream().close();
+            }
+            SimpleResponse<?> response = SimpleResponse.withoutData(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getStatus()));
+        }
+        catch (Exception e) {
+            SimpleResponse<?> response = SimpleResponse.withoutData(ex.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.valueOf(ex.getStatus()));
+        }
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

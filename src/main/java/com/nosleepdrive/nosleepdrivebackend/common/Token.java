@@ -1,5 +1,6 @@
 package com.nosleepdrive.nosleepdrivebackend.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @Component
 public class Token {
-    private static String SECRET_KEY; // 보안에 주의하세요!
+    private static String SECRET_KEY;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public Token(@Value("${security.token.key}") String key) {
@@ -42,17 +43,7 @@ public class Token {
 
     public static long verifyToken(String token) {
         try{
-            String[] parts = token.split("\\.");
-            if (parts.length != 2) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
-
-            String encodedPayload = parts[0];
-            String receivedSignature = parts[1];
-
-            String expectedSignature = sign(encodedPayload, SECRET_KEY);
-            if (!expectedSignature.equals(receivedSignature)) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
-
-            String payloadJson = new String(Base64.getUrlDecoder().decode(encodedPayload));
-            Map<String, Object> payload = objectMapper.readValue(payloadJson, Map.class);
+            Map<String, Object> payload = readData(token);
 
             long exp = ((Number) payload.get("exp")).longValue();
             if(System.currentTimeMillis() / 1000 >= exp){
@@ -68,7 +59,37 @@ public class Token {
         }
     }
 
+    public static String verifyTokenHardware(String token) {
+        try{
+            Map<String, Object> payload = readData(token);
 
+            long exp = ((Number) payload.get("exp")).longValue();
+            if(System.currentTimeMillis() / 1000 >= exp){
+                throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+            }
+            return payload.get("uid").toString();
+        }
+        catch(CustomError e){
+            throw e;
+        }
+        catch (Exception e) {
+            throw new CustomError(BAD_REQUEST.value(), Message.ERR_IN_TOKEN.getMessage());
+        }
+    }
+
+    private static Map readData(String token) throws JsonProcessingException {
+        String[] parts = token.split("\\.");
+        if (parts.length != 2) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+
+        String encodedPayload = parts[0];
+        String receivedSignature = parts[1];
+
+        String expectedSignature = sign(encodedPayload, SECRET_KEY);
+        if (!expectedSignature.equals(receivedSignature)) throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+
+        String payloadJson = new String(Base64.getUrlDecoder().decode(encodedPayload));
+        return objectMapper.readValue(payloadJson, Map.class);
+    }
 
     private static String sign(String data, String secret) {
         try {

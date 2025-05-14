@@ -2,11 +2,19 @@ package com.nosleepdrive.nosleepdrivebackend.sleep.repository.entity;
 
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public class Sleep {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

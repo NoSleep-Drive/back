@@ -106,7 +106,7 @@ public class SleepController {
     }
 
     @GetMapping("")
-    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getSleepDataList(@RequestHeader("Authorization") String authHeader, @Valid SleepListParamDto param) {
+    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getSleepDataList(@RequestHeader("Authorization") String authHeader, @Valid @ModelAttribute SleepListParamDto param) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }

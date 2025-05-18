@@ -80,8 +80,8 @@ public class SleepService {
     public List<Sleep> getSleepList(Company curCompany, SleepListParamDto data){
         return sleepRepository.getFilteredSleepData(
                 curCompany.getIdCompany(),
-                data.getStartDate(),
-                data.getEndDate(),
+                data.getStartDate()!=null ? data.getStartDate().atStartOfDay() : null,
+                data.getEndDate()!=null ? data.getEndDate().atTime(23,59,59) : null,
                 data.getVehicleNumber(),
                 data.getDriverHash());
     }

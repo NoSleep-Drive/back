@@ -76,12 +76,12 @@ public class VehicleService {
     }
 
     @Transactional
-    public void updateVehicleStatusByDeviceUid(ChangeVehicleStatusDto request, Company company) {
+    public void updateVehicleStatusByDeviceUid(ChangeVehicleStatusDto request, Vehicle inputVehicle) {
         Vehicle vehicle = vehicleRepository.findByIdHardware(request.getDeviceUid());
         if(vehicle==null) {
             throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_NOT_FOUND_VEHICLE.getMessage());
         }
-        if(vehicle.getCompany() != company){
+        if(vehicle != inputVehicle){
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
         int status = getStatusCodeByDeviceState(request);

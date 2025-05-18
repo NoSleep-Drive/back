@@ -67,16 +67,14 @@ public class VehicleController {
 
     @PatchMapping("/status")
     public ResponseEntity<SimpleResponse<?>> changeVehicleStatus(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody ChangeVehicleStatusDto request) {
-        // 임베디드 verify 방식에 대한 논의 필요
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }
 
         String token = authHeader.substring(7);
-        Company curCompany = companyService.authCompany(token);
+        Vehicle curVehicle = vehicleService.authVehicle(token);
 
-        vehicleService.updateVehicleStatusByDeviceUid(request, curCompany);
+        vehicleService.updateVehicleStatusByDeviceUid(request, curVehicle);
 
         SimpleResponse<?> response = SimpleResponse.withoutData(
                 Message.UPDATE_VEHICLE_STATUS_SUCCESS.getMessage()

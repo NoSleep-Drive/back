@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface SleepRepository extends JpaRepository<Sleep, Long> {
     @Query("SELECT count(*) FROM Sleep s " +
@@ -35,8 +38,8 @@ public interface SleepRepository extends JpaRepository<Sleep, Long> {
             "ORDER BY s.sleepTime DESC ")
     List<Sleep> getFilteredSleepData(
             @Param("companyId") Long companyId,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
             @Param("vehicleNumber") String vehicleNumber,
             @Param("driverHash") String driverHash);
 

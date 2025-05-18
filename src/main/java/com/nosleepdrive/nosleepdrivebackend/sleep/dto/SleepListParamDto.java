@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -18,8 +21,11 @@ public class SleepListParamDto {
     @Min(1)
     private Integer pageSize = 5;
 
-    private Date startDate;
-    private Date endDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate startDate;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate endDate;
     private String vehicleNumber;
     private String driverHash;
 }

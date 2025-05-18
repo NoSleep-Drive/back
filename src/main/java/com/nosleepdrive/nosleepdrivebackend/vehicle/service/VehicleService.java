@@ -190,9 +190,6 @@ public class VehicleService {
         if(vehicle.getCompany() != company){
             throw new CustomError(HttpStatus.FORBIDDEN.value(), Message.ERR_FORBIDDEN.getMessage());
         }
-        if(vehicle.getRentTime() == null){
-            throw new CustomError(HttpStatus.CONFLICT.value(), Message.ERR_NOT_RENT.getMessage());
-        }
 
         return vehicle.getDrivers();
     }

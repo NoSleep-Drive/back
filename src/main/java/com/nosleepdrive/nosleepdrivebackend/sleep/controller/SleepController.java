@@ -56,6 +56,7 @@ public class SleepController {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
             body.setDetectedAtDate(dateFormat.parse(body.getDetectedAt()));
         } catch (ParseException e) {
+            System.out.println(e.getMessage());
             throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_INVALID_INPUT.getMessage());
         }
 
@@ -105,7 +106,7 @@ public class SleepController {
     }
 
     @GetMapping("")
-    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getSleepDataList(@RequestHeader("Authorization") String authHeader, @Valid SleepListParamDto param) {
+    public ResponseEntity<SimpleResponse<List<SleepDataDto>>> getSleepDataList(@RequestHeader("Authorization") String authHeader, @Valid @ModelAttribute SleepListParamDto param) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
         }

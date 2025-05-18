@@ -38,10 +38,20 @@ public class SleepService {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-
         try {
-            String totalPath = uploadDir +dateValue+ body.getVideoFile().getOriginalFilename();
+            String originalFilename = body.getVideoFile().getOriginalFilename();
+            String totalPath = uploadDir +dateValue+ originalFilename;
+            String baseName = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
             File destinationFile = new File(totalPath);
+            int count = 1;
+            while (destinationFile.exists()) {
+                String newFileName = baseName + "_" + count + extension;
+                totalPath = uploadDir + dateValue + newFileName;
+                destinationFile = new File(totalPath);
+                count++;
+            }
+
             body.getVideoFile().transferTo(destinationFile);
 
             Sleep sleep = Sleep.builder()
@@ -70,8 +80,8 @@ public class SleepService {
     public List<Sleep> getSleepList(Company curCompany, SleepListParamDto data){
         return sleepRepository.getFilteredSleepData(
                 curCompany.getIdCompany(),
-                data.getStartDate(),
-                data.getEndDate(),
+                data.getStartDate()!=null ? data.getStartDate().atStartOfDay() : null,
+                data.getEndDate()!=null ? data.getEndDate().atTime(23,59,59) : null,
                 data.getVehicleNumber(),
                 data.getDriverHash());
     }

@@ -38,7 +38,7 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Vehicle> vehicles = new ArrayList<>();
 
-    public void updateCompany(String businessNumber, String companyName, String password) {
+    public void updateCompany(String companyName, String businessNumber, String password) {
         if(businessNumber != null) {
             this.businessNumber = businessNumber;
         }

@@ -26,8 +26,8 @@ public class Sleep {
     private String sleepVideoPath;
 
     @NonNull
-    @Column(name = "sleep_time", updatable = false, nullable = false)
-    private Date sleepTime;
+    @Column(name = "sleep_time", updatable = false, nullable = false, length = 50)
+    private String sleepTime;
 
     @NonNull
     @ManyToOne(fetch = FetchType.LAZY)

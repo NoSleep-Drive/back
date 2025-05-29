@@ -55,7 +55,7 @@ public class SleepService {
             body.getVideoFile().transferTo(destinationFile);
 
             Sleep sleep = Sleep.builder()
-                    .sleepTime(body.getDetectedAtDate())
+                    .sleepTime(body.getDetectedAt())
                     .sleepVideoPath(totalPath)
                     .driver(curDriver)
                     .build();

@@ -6,7 +6,6 @@ import com.nosleepdrive.nosleepdrivebackend.company.service.CompanyService;
 import com.nosleepdrive.nosleepdrivebackend.driver.repository.entity.Driver;
 import com.nosleepdrive.nosleepdrivebackend.driver.service.DriverService;
 import com.nosleepdrive.nosleepdrivebackend.sleep.dto.*;
-import com.nosleepdrive.nosleepdrivebackend.sleep.repository.SleepRepository;
 import com.nosleepdrive.nosleepdrivebackend.sleep.service.SleepService;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.repository.entity.Vehicle;
 import com.nosleepdrive.nosleepdrivebackend.vehicle.service.VehicleService;
@@ -22,16 +21,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
-import java.util.zip.ZipOutputStream;
 
 @RestController()
 @RequiredArgsConstructor
@@ -54,6 +49,7 @@ public class SleepController {
         Vehicle curVehicle = vehicleService.authVehicle(token);
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             body.setDetectedAtDate(dateFormat.parse(body.getDetectedAt()));
         } catch (ParseException e) {
             System.out.println(e.getMessage());

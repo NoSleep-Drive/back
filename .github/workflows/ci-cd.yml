@@ -77,6 +77,15 @@ jobs:
             echo ".env file does not exist"
           fi
 
+      - name: Clear old JAR on EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "Deleting old JAR files..."
+            rm -f /home/noSleepDrive/app/backend/*.jar
 
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4

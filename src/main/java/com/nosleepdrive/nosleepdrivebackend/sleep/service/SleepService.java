@@ -131,4 +131,8 @@ public class SleepService {
 
         return result;
     }
+
+    public int getSleepCountByDriver(Company curCompany, String driverHash){
+        return sleepRepository.getCountSleepsByCompanyIdAndDriverId(curCompany.getIdCompany(), driverHash);
+    }
 }

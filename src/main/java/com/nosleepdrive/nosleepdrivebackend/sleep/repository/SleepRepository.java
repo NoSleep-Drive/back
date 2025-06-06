@@ -26,7 +26,14 @@ public interface SleepRepository extends JpaRepository<Sleep, Long> {
             "JOIN d.vehicle v " +
             "JOIN v.company c " +
             "WHERE c.idCompany = :companyId AND d.driverHash = :driverHash")
-    int getCountSleepsByCompanyIdAndDriverId(@Param("companyId") Long companyId, @Param("driverHash") String driverHash);
+    int getCountSleepsByCompanyIdAndDriverHash(@Param("companyId") Long companyId, @Param("driverHash") String driverHash);
+
+    @Query("SELECT count(*) FROM Sleep s " +
+            "JOIN s.driver d " +
+            "JOIN d.vehicle v " +
+            "JOIN v.company c " +
+            "WHERE c.idCompany = :companyId AND v.carNumber = :vehicleNumber")
+    int getCountSleepsByCompanyIdAndVehicleNumber(@Param("companyId") Long companyId, @Param("vehicleNumber") String vehicleNumber);
 
     @Query("SELECT s FROM Sleep s " +
             "JOIN s.driver d " +

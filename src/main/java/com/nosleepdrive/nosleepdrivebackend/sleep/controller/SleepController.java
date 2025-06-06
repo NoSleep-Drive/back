@@ -218,6 +218,23 @@ public class SleepController {
 
     }
 
+    @GetMapping("/count/by-vehicle/{vehicleNumber}")
+    public ResponseEntity<SimpleResponse<CountDto>> getCountByVehicle(@RequestHeader("Authorization") String authHeader, @PathVariable String vehicleNumber) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CustomError(HttpStatus.UNAUTHORIZED.value(), Message.ERR_VERIFY_TOKEN.getMessage());
+        }
+
+        String token = authHeader.substring(7);
+        Company curCompany = companyService.authCompany(token);
+        int result = sleepService.getSleepCountByVehicle(curCompany, vehicleNumber);
+        CountDto body = new CountDto(result);
+        SimpleResponse<CountDto> response = SimpleResponse.withData(Message.GET_SLEEP_COUNT_SUCCESS.getMessage(), body);
+        return ResponseEntity
+                .status(HttpStatus.OK.value())
+                .body(response);
+
+    }
+
     @GetMapping("/{sleepId}")
     public ResponseEntity<SimpleResponse<SleepDataDto>> getSleepData(@RequestHeader("Authorization") String authHeader, @PathVariable String sleepId) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

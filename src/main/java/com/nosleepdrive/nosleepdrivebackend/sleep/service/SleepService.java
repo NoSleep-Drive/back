@@ -133,6 +133,10 @@ public class SleepService {
     }
 
     public int getSleepCountByDriver(Company curCompany, String driverHash){
-        return sleepRepository.getCountSleepsByCompanyIdAndDriverId(curCompany.getIdCompany(), driverHash);
+        return sleepRepository.getCountSleepsByCompanyIdAndDriverHash(curCompany.getIdCompany(), driverHash);
+    }
+
+    public int getSleepCountByVehicle(Company curCompany, String vehicleNumber){
+        return sleepRepository.getCountSleepsByCompanyIdAndVehicleNumber(curCompany.getIdCompany(), vehicleNumber);
     }
 }

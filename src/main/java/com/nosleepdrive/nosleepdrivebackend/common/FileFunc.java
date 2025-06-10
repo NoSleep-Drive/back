@@ -5,9 +5,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,6 +50,56 @@ public class FileFunc {
         }
         catch (Exception e){
             throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_DURING_STREAM.getMessage());
+        }
+    }
+
+    public static boolean isFaststartProcessed(String videoPath) {
+        try{
+            try (RandomAccessFile raf = new RandomAccessFile(videoPath, "r")) {
+                while (true) {
+                    long pos = raf.getFilePointer();
+                    if (pos + 8 > raf.length()) break; // 더 이상 읽을 박스 없음
+
+                    int size = raf.readInt();
+                    byte[] typeBytes = new byte[4];
+                    raf.readFully(typeBytes);
+                    String type = new String(typeBytes, "UTF-8");
+
+                    if ("moov".equals(type)) {
+                        return true;
+                    } else if ("mdat".equals(type)) {
+                        return false;
+                    }
+
+                    if (size < 8) break;
+                    raf.seek(pos + size);
+                }
+            }
+            return false;
+        }
+        catch (Exception e){
+            throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_INVALID_VIDEO.getMessage());
+        }
+    }
+    public static void applyFaststart(String inputPath, String outputPath) {
+        try {
+            ProcessBuilder builder = new ProcessBuilder(
+                    "ffmpeg", "-y",
+                    "-i", inputPath,
+                    "-movflags", "faststart",
+                    outputPath
+            );
+            builder.redirectErrorStream(true);
+            Process process = builder.start();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                while (reader.readLine() != null) {
+                }
+            }
+            process.waitFor();
+        }
+        catch (Exception e){
+            throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_INVALID_VIDEO.getMessage());
         }
     }
 

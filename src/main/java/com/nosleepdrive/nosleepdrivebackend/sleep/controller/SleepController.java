@@ -52,7 +52,6 @@ public class SleepController {
             dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             body.setDetectedAtDate(dateFormat.parse(body.getDetectedAt()));
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
             throw new CustomError(HttpStatus.BAD_REQUEST.value(), Message.ERR_INVALID_INPUT.getMessage());
         }
 

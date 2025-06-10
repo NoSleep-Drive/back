@@ -1,6 +1,7 @@
 package com.nosleepdrive.nosleepdrivebackend.sleep.service;
 
 import com.nosleepdrive.nosleepdrivebackend.common.CustomError;
+import com.nosleepdrive.nosleepdrivebackend.common.FileFunc;
 import com.nosleepdrive.nosleepdrivebackend.common.Message;
 import com.nosleepdrive.nosleepdrivebackend.common.SimpleResponse;
 import com.nosleepdrive.nosleepdrivebackend.company.repository.entity.Company;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -51,8 +54,21 @@ public class SleepService {
                 destinationFile = new File(totalPath);
                 count++;
             }
+            String tnsFilePath = uploadDir+"tns/tns"+extension;
+            File tns = new File(tnsFilePath);
+            File tnsParent = tns.getParentFile();
+            if (!tnsParent.exists()) {
+                tnsParent.mkdirs();
+            }
+            body.getVideoFile().transferTo(tns);
 
-            body.getVideoFile().transferTo(destinationFile);
+            if(!FileFunc.isFaststartProcessed(tnsFilePath)) {
+                FileFunc.applyFaststart(tnsFilePath, totalPath);
+            }
+            else{
+                Files.copy(tns.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+
 
             Sleep sleep = Sleep.builder()
                     .sleepTime(body.getDetectedAtDate())
@@ -62,9 +78,11 @@ public class SleepService {
             sleepRepository.save(sleep);
         }
         catch (CustomError e) {
+            System.out.println(e.getMessage());
             throw e;
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_INVALID_VIDEO.getMessage());
         }
     }

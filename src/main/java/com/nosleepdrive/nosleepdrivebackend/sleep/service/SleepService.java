@@ -78,11 +78,9 @@ public class SleepService {
             sleepRepository.save(sleep);
         }
         catch (CustomError e) {
-            System.out.println(e.getMessage());
             throw e;
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new CustomError(HttpStatus.NOT_FOUND.value(), Message.ERR_INVALID_VIDEO.getMessage());
         }
     }

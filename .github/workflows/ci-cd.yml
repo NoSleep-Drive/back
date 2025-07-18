@@ -77,12 +77,21 @@ jobs:
             echo ".env file does not exist"
           fi
 
+#      - name: Clear old JAR on EC2
+#        uses: appleboy/ssh-action@v0.1.6
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+#          script: |
+#            echo "Deleting old JAR files..."
+#            rm -f /home/noSleepDrive/app/backend/*.jar
       - name: Clear old JAR on EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.KT_C_SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.KT_C_SSH_KEY }}
           script: |
             echo "Deleting old JAR files..."
             rm -f /home/noSleepDrive/app/backend/*.jar
@@ -90,9 +99,12 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.SSH_HOST }}
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.KT_C_SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.KT_C_SSH_KEY }}
           source: "build/libs/*.jar"
           target: "/home/noSleepDrive/app/backend"
           strip_components: 2
@@ -100,18 +112,24 @@ jobs:
       - name: Deploy .env via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.SSH_HOST }}
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.KT_C_SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.KT_C_SSH_KEY }}
           source: ".env"
           target: "/home/noSleepDrive/app/backend"
           
       - name: Deploy shall script via SSH
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.SSH_HOST }}
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.KT_C_SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.KT_C_SSH_KEY }}
           source: "scripts/start.sh"
           target: "/home/noSleepDrive/app/backend"
           strip_components: 1
@@ -119,9 +137,12 @@ jobs:
       - name: Execute start.sh on EC2
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_HOST }}
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ${{ secrets.SSH_USER }}
+#          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.KT_C_SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.KT_C_SSH_KEY }}
           script: |
             chmod +x /home/noSleepDrive/app/backend/start.sh
             /home/noSleepDrive/app/backend/start.sh
